@@ -16,11 +16,41 @@ class IndexController extends AbstractController
     public function index()
     {
         $title = "index action";
-//        $objDateTime = new \DateTime('NOW');
-//        $dateString = $objDateTime->format('Y-m-d H:i:s');
+        // $objDateTime = new \DateTime('NOW');
+        // $dateString = $objDateTime->format('Y-m-d H:i:s');
+
+        // Get Subscription with id(1) and if car is valid then change "new" value to "active"
+        $id = 0;
+        try {
+            $entityManager = $this->getDoctrine()->getManager();
+            $subscription = $entityManager
+                ->getRepository(Subscription::class)
+                ->find($id);
+            if('cars is valid' === 1){
+                $subscription->setStatus("new");
+                $entityManager->flush();
+                $this->addFlash('message', 'Your subscription is now "active"');
+                // send email here
+            }else{
+                $this->addFlash('message', 'Invalid card number');
+            }
+
+            if (!$subscription) {
+                throw $this->createNotFoundException(
+                    'No Subscription found for id '.$id
+                );
+            }
+
+            $status = $subscription->getStatus();
+        }catch (\Exception $e){
+            $this->addFlash('message', 'Subscription id not found');
+            $status = "Status not available";
+        }
+
+
 
         return $this->render('index/index.html.twig', [
-            'title' => $title,
+            'title' => $title . ' ' . $status,
         ]);
     }
 

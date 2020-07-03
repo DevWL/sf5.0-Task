@@ -11,7 +11,7 @@
     </head>
     <body>
         <div class="container">
-            <ul class="nav">
+            <ul class="nav justify-content-end">
                 <li class="nav-item">
                     <a class="nav-link" href="/">Home</a>
                 </li>
@@ -19,7 +19,12 @@
                     <a class="nav-link" href="/usersubscriptions">User subscriptions</a>
                 </li>
             </ul>
-            {% block body %}{% endblock %}
+            {% for message in app.flashes('message') %}
+                <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+            <div class="container pt-5 pb-5">
+                {% block body %}{% endblock %}
+            </div>
         </div>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
