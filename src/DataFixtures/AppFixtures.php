@@ -16,18 +16,38 @@ class AppFixtures extends Fixture
         $pass =  password_hash("secretphrase", PASSWORD_BCRYPT, ['cost' => 12]);
 
         $userEntries = [
-            ["Rob", $pass, ["customer"], "rob@gmail.com"],
-            ["Bob", $pass, ["customer"], "bob@gmail.com"],
-            ["Ana", $pass, ["customer"], "ana@gmail.com"],
-            ["Joy", $pass, ["customer"], "joy@gmail.com"]
+            [
+                "name" => "Rob",
+                "pass" => $pass,
+                "role" => ["customer"],
+                "email" => "rob@gmail.com"
+            ],
+            [
+                "name" => "Bob",
+                "pass" => $pass,
+                "role" => ["customer"],
+                "email" => "bob@gmail.com"
+            ],
+            [
+                "name" => "Ana",
+                "pass" => $pass,
+                "role" => ["customer"],
+                "email" => "ana@gmail.com"
+            ],
+            [
+                "name" => "Joy",
+                "pass" => $pass,
+                "role" => ["customer"],
+                "email" => "joy@gmail.com"
+            ]
         ];
 
         foreach ($userEntries as $userEntry){
             $user = new User();
-            $user->setUsername($userEntry[0]);
-            $user->setPassword($userEntry[1]);
-            $user->setRoles($userEntry[2]);
-            $user->setEmail($userEntry[3]);
+            $user->setUsername($userEntry["name"]);
+            $user->setPassword($userEntry["pass"]);
+            $user->setRoles($userEntry["role"]);
+            $user->setEmail($userEntry["email"]);
             $manager->persist($user);
         }
         $manager->flush();
