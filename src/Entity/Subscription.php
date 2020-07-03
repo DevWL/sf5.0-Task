@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SubscriptionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -57,6 +59,16 @@ class Subscription
      * @ORM\Column(type="datetime")
      */
     private $created_at;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SubscriptionPayment::class, mappedBy="subscription_id")
+     */
+    private $subscriptionPayments;
+
+    public function __construct()
+    {
+        $this->subscriptionPayments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -155,6 +167,37 @@ class Subscription
     public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SubscriptionPayment[]
+     */
+    public function getSubscriptionPayments(): Collection
+    {
+        return $this->subscriptionPayments;
+    }
+
+    public function addSubscriptionPayment(SubscriptionPayment $subscriptionPayment): self
+    {
+        if (!$this->subscriptionPayments->contains($subscriptionPayment)) {
+            $this->subscriptionPayments[] = $subscriptionPayment;
+            $subscriptionPayment->setSubscriptionId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscriptionPayment(SubscriptionPayment $subscriptionPayment): self
+    {
+        if ($this->subscriptionPayments->contains($subscriptionPayment)) {
+            $this->subscriptionPayments->removeElement($subscriptionPayment);
+            // set the owning side to null (unless already changed)
+            if ($subscriptionPayment->getSubscriptionId() === $this) {
+                $subscriptionPayment->setSubscriptionId(null);
+            }
+        }
 
         return $this;
     }
