@@ -20,7 +20,7 @@ class SubscriptionPayment
     /**
      * @ORM\ManyToOne(targetEntity=Subscription::class, inversedBy="subscriptionPayments")
      */
-    private $subscription_id;
+    private $subscription;
 
     /**
      * @ORM\Column(type="integer")
@@ -47,14 +47,14 @@ class SubscriptionPayment
         return $this->id;
     }
 
-    public function getSubscriptionId(): ?Subscription
+    public function getSubscription(): ?Subscription
     {
-        return $this->subscription_id;
+        return $this->subscription;
     }
 
-    public function setSubscriptionId(?Subscription $subscription_id): self
+    public function setSubscription(?Subscription $subscription): self
     {
-        $this->subscription_id = $subscription_id;
+        $this->subscription = $subscription;
 
         return $this;
     }

@@ -148,7 +148,7 @@ class User implements UserInterface
     {
         if (!$this->subscriptions->contains($subscription)) {
             $this->subscriptions[] = $subscription;
-            $subscription->setUserId($this);
+            $subscription->setUser($this);
         }
 
         return $this;
@@ -159,8 +159,8 @@ class User implements UserInterface
         if ($this->subscriptions->contains($subscription)) {
             $this->subscriptions->removeElement($subscription);
             // set the owning side to null (unless already changed)
-            if ($subscription->getUserId() === $this) {
-                $subscription->setUserId(null);
+            if ($subscription->getUser() === $this) {
+                $subscription->setUser(null);
             }
         }
 

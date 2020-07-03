@@ -23,7 +23,7 @@ class Subscription
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="subscriptions")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user_id;
+    private $user;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -75,14 +75,14 @@ class Subscription
         return $this->id;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(?User $user_id): self
+    public function setUser(?User $user): self
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
 
         return $this;
     }
@@ -183,7 +183,7 @@ class Subscription
     {
         if (!$this->subscriptionPayments->contains($subscriptionPayment)) {
             $this->subscriptionPayments[] = $subscriptionPayment;
-            $subscriptionPayment->setSubscriptionId($this);
+            $subscriptionPayment->setSubscription($this);
         }
 
         return $this;
@@ -194,8 +194,8 @@ class Subscription
         if ($this->subscriptionPayments->contains($subscriptionPayment)) {
             $this->subscriptionPayments->removeElement($subscriptionPayment);
             // set the owning side to null (unless already changed)
-            if ($subscriptionPayment->getSubscriptionId() === $this) {
-                $subscriptionPayment->setSubscriptionId(null);
+            if ($subscriptionPayment->getSubscription() === $this) {
+                $subscriptionPayment->setSubscription(null);
             }
         }
 
