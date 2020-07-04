@@ -39,10 +39,18 @@ class SubscriptionPaymentRepository extends ServiceEntityRepository
         return $daysLeftToSubsEnd;
     }
 
-    // /**
-    //  * @return SubscriptionPayment[] Returns an array of SubscriptionPayment objects
-    //  */
-    /*
+     /**
+      * Find all inactive subscriptinos and stop them
+      * @return void
+      */
+
+    // PURE SQL QUERY TO FIND ONLY NEWEST PAYMENT DATE
+    // SELECT s.id, s.status, sp.id, MAX(sp.date) FROM subscription s RIGHT JOIN subscription_payment sp ON s.id = sp.subscription_id GROUP BY s.id
+
+    /**
+     * @param $value
+     * @return void
+     */
     public function findByExampleField($value)
     {
         return $this->createQueryBuilder('s')
@@ -54,7 +62,6 @@ class SubscriptionPaymentRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?SubscriptionPayment
