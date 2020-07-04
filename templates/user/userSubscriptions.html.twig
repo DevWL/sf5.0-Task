@@ -13,19 +13,19 @@
 
     {% for sub in userSubscriptionArray %}
         <ul>
-        <li>User: {{ sub.user.username }} | Id: {{ sub.user.id }}</li>
-        <li>Subscription | id: {{ sub.id }}</li>
+        <li>Hello! {{ sub.user.username }}</li>
+        <li><span class="data description">Subscription id:</span> {{ sub.id }}</li>
             {% if sub.status != 'stopped' %}
                 <a href="{{ path('subscription_stop', {id: sub.id}) }}"><button class="btn btn-danger">stop</button></a>
             {% else %}
                 <a href="{{ path('subscription_activate', {id: sub.id}) }}"><button class="btn btn-info">activate</button></a>
             {% endif %}
-        <li>{{ sub.status }}</li>
-        <li>started at: {{ sub.startedAt | date('Y-m-d') }}
+        <li><span class="data description">status:</span> {{ sub.status }}</li>
+        <li><span class="data description">started at:</span> {{ sub.startedAt | date('Y-m-d') }}
             <li>Billing history</li>
             <ul>
                 {% for subPay in sub.subscriptionPayments %}
-                <li>id: {{ subPay.id }} | amount: {{ subPay.chargedamount }} zł | at: {{ subPay.date | date('Y-m-d') }}</li>
+                <li><span class="data description">id:</span> {{ subPay.id }} <span class="data description">amount:</span> {{ subPay.chargedamount }} zł <span class="data description">at:</span> {{ subPay.date | date('Y-m-d') }}</li>
                 {% endfor %}
                 <a href="{{ path('subscription_payment', {id: sub.id}) }}"><button class="btn btn-success">pay</button></a>
             </ul>

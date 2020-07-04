@@ -7,7 +7,6 @@ use App\Entity\Subscription;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -18,8 +17,8 @@ class UserController extends AbstractController
      */
     public function subscriptionStop($id)
     {
-        // check if user have privileges to perform action, and if not redirect ...
-        // delete subscription
+        /* check if user have privileges to perform action, and if not redirect ... */
+        /* delete subscription */
         $em = $this->getDoctrine()->getManager();
         /* @var Subscription $subscription */
         $subscription = $em->getRepository(Subscription::class)->find($id);
@@ -28,7 +27,7 @@ class UserController extends AbstractController
         $em->flush();
         $this->addFlash('message', 'Subscription stopped');
 
-        // redirect to user panel
+        /* redirect to user panel */
         return new RedirectResponse($this->generateUrl("user_subscriptions"));
     }
 
@@ -37,8 +36,10 @@ class UserController extends AbstractController
      */
     public function subscriptionActivate($id)
     {
-        // check if user have privileges to perform action, and if not redirect ...
-        // delete subscription
+        /*
+        * check if user have privileges to perform action, and if not redirect ...
+        * delete subscription
+        */
         $em = $this->getDoctrine()->getManager();
         /* @var Subscription $subscription */
         $subscription = $em->getRepository(Subscription::class)->find($id);
@@ -49,7 +50,7 @@ class UserController extends AbstractController
          */
 
         $daysLeftToSubsEnd = $em->getRepository(SubscriptionPayment::class)->daysLeftToSubsEnd($subscription->getId());
-//        var_dump($daysLeftToSubsEnd);die;
+        /* var_dump($daysLeftToSubsEnd);die; */
         if($daysLeftToSubsEnd > 0){
             $subscription->setStatus('active');
             $em->persist($subscription);
@@ -60,7 +61,7 @@ class UserController extends AbstractController
             $this->addFlash('warning', 'Sorry your subscription period has expired! Make a new purchase.');
         }
 
-        // redirect to user panel
+        /* redirect to user panel */
         return new RedirectResponse($this->generateUrl("user_subscriptions"));
     }
 
@@ -69,13 +70,13 @@ class UserController extends AbstractController
      */
     public function subscriptionPayment(Request $request)
     {
-        // check if user have privileges to perform action, and if not redirect ...
-        // process payment form and redirect to user_subscriptions
+        /* check if user have privileges to perform action, and if not redirect ... */
+        /* process payment form and redirect to user_subscriptions */
 
         $em = $this->getDoctrine()->getManager();
-//        $em->getRepository(Subscription::)
+        /* $em->getRepository(Subscription::) */
 
-        // redirect to user panel
+        /* redirect to user panel */
         return new RedirectResponse($this->generateUrl("user_subscriptions"));
     }
 
@@ -85,7 +86,7 @@ class UserController extends AbstractController
     public function userSubscriptions()
     {
         $title = "userSubscriptions action";
-        $loggedInUserId = 2; // just assuming that we query id of logged in User
+        $loggedInUserId = 2; /* just assuming that we query id of logged in User */
 
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository(User::class)
