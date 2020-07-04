@@ -59,7 +59,7 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/usersubscriptions", name="userSubscriptions")
+     * @Route("/usersubscriptions", name="user_subscriptions")
      */
     public function userSubscriptions()
     {
