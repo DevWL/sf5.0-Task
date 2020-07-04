@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\SubscriptionPayment;
@@ -30,7 +29,7 @@ class IndexController extends AbstractController
                 $subscription->setStatus("new");
                 $em->flush();
                 $this->addFlash('message', 'Your subscription is now active');
-                // send email here
+                // fake send email on form validation
                 $email = (new Email())
                     ->from('office@company.com')
                     ->to('userEntityEmail@gmail.com')
@@ -58,29 +57,4 @@ class IndexController extends AbstractController
             'title' => $title . ' ' . $status,
         ]);
     }
-
-    /**
-     * @Route("/usersubscriptions", name="user_subscriptions")
-     */
-    public function userSubscriptions()
-    {
-        $title = "userSubscriptions action";
-        $loggedInUserId = 2; // just assuming that we query id of logged in User
-
-        $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository(User::class)
-            ->find($loggedInUserId);
-
-        /* @var \Doctrine\ORM\PersistentCollection $subscriptions */
-        $subscriptions = $user->getSubscriptions();
-        /* @var Subscription[] $userSubscriptionArray */
-        $userSubscriptionArray = $subscriptions->toArray();
-
-        return $this->render('index/userSubscriptions.html.twig', [
-            'title' => $title,
-            'userSubscriptionArray' => $userSubscriptionArray,
-        ]);
-    }
-
-    
 }

@@ -14,16 +14,20 @@
     {% for sub in userSubscriptionArray %}
         <ul>
         <li>User: {{ sub.user.username }} | Id: {{ sub.user.id }}</li>
-        <li>Subscription id: {{ sub.id }}</li>
-            <a href="/subscription/remove/{{sub.id}}"><button class="btn btn-danger">remove</button></a>
+        <li>Subscription | id: {{ sub.id }}</li>
+            {% if sub.status != 'stopped' %}
+                <a href="{{ path('subscription_stop', {id: sub.id}) }}"><button class="btn btn-danger">stop</button></a>
+            {% else %}
+                <a href="{{ path('subscription_activate', {id: sub.id}) }}"><button class="btn btn-info">activate</button></a>
+            {% endif %}
         <li>{{ sub.status }}</li>
         <li>started at: {{ sub.startedAt | date('Y-m-d') }}
             <li>Billing history</li>
             <ul>
                 {% for subPay in sub.subscriptionPayments %}
-                <li>id: {{ subPay.id }} amount {{ subPay.chargedamount }} zł</li>
+                <li>id: {{ subPay.id }} | amount: {{ subPay.chargedamount }} zł | at: {{ subPay.date | date('Y-m-d') }}</li>
                 {% endfor %}
-                <a href="/subscription/remove/{{sub.id}}"><button class="btn btn-success">pay</button></a>
+                <a href="{{ path('subscription_payment', {id: sub.id}) }}"><button class="btn btn-success">pay</button></a>
             </ul>
         </ul>
     {% endfor %}

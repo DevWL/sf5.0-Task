@@ -19,6 +19,26 @@ class SubscriptionPaymentRepository extends ServiceEntityRepository
         parent::__construct($registry, SubscriptionPayment::class);
     }
 
+    public function daysLeftToSubsEnd($id){
+        $dql = "SELECT subPay.date 
+            FROM App\Entity\SubscriptionPayment subPay 
+            WHERE subPay.subscription = {$id} 
+            ORDER BY subPay.date DESC";
+        $query = $this->getEntityManager()->createQuery($dql)->setMaxResults(1)->getResult();
+
+        /* @var \DateTime $lastPayment */
+        $lastPayment = $query[0]['date'];
+        $dateSubsEnds = $lastPayment->modify('+30 day');
+        $dateNow = new \DateTime('NOW');
+
+        echo "<pre>";
+        var_dump($dateNow, $dateSubsEnds);
+        $daysLeftToSubsEndDateTime = $dateSubsEnds->diff($dateNow);
+        $daysLeftToSubsEnd = (int)$daysLeftToSubsEndDateTime->format('%a');
+
+        return $daysLeftToSubsEnd;
+    }
+
     // /**
     //  * @return SubscriptionPayment[] Returns an array of SubscriptionPayment objects
     //  */
