@@ -10,5 +10,23 @@
 
 <div class="example-wrapper">
     <h1>{{ title }} ✅</h1>
+
+    {% for sub in userSubscriptionArray %}
+        <ul>
+        <li>User: {{ sub.user.username }}</li>
+        <li>subscription id {{ sub.id }}</li>
+            <a href="/subscription/remove/{{sub.id}}"><button class="btn btn-success">pay</button></a>
+            <a href="/subscription/remove/{{sub.id}}"><button class="btn btn-danger">remove</button></a>
+        <li>{{ sub.status }}</li>
+        <li>started at: {{ sub.startedAt | date('Y-m-d') }}
+            <ul>
+                {% for subPay in sub.subscriptionPayments %}
+                <li>{{ subPay.id }} paid {{ subPay.chargedamount }} zł</li>
+                {% endfor %}
+            </ul>
+        </ul>
+
+    {% endfor %}
+
 </div>
 {% endblock %}

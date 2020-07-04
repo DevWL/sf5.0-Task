@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\SubscriptionPayment;
@@ -21,13 +22,13 @@ class IndexController extends AbstractController
         // Get Subscription with id(1) and if car is valid then change "new" value to "active"
         $id = 1;
         try {
-            $entityManager = $this->getDoctrine()->getManager();
-            $subscription = $entityManager
+            $em = $this->getDoctrine()->getManager();
+            $subscription = $em
                 ->getRepository(Subscription::class)
                 ->find($id);
             if('cars is valid' === 1){
                 $subscription->setStatus("new");
-                $entityManager->flush();
+                $em->flush();
                 $this->addFlash('message', 'Your subscription is now active');
                 // send email here
                 $email = (new Email())
@@ -50,7 +51,7 @@ class IndexController extends AbstractController
             $status = $subscription->getStatus();
 
         }catch (\Exception $e){
-            $status = "Status not available";
+            $status = "Status is not available";
         }
 
         return $this->render('index/index.html.twig', [
@@ -64,9 +65,20 @@ class IndexController extends AbstractController
     public function userSubscriptions()
     {
         $title = "userSubscriptions action";
+        $loggedInUserId = 2; // just assuming that we query id of logged in User
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)
+            ->find($loggedInUserId);
+
+        /* @var \Doctrine\ORM\PersistentCollection $subscriptions */
+        $subscriptions = $user->getSubscriptions();
+        /* @var Subscription[] $userSubscriptionArray */
+        $userSubscriptionArray = $subscriptions->toArray();
 
         return $this->render('index/userSubscriptions.html.twig', [
             'title' => $title,
+            'userSubscriptionArray' => $userSubscriptionArray,
         ]);
     }
 }

@@ -61,7 +61,7 @@ class Subscription
     private $created_at;
 
     /**
-     * @ORM\OneToMany(targetEntity=SubscriptionPayment::class, mappedBy="subscription_id")
+     * @ORM\OneToMany(targetEntity=SubscriptionPayment::class, mappedBy="subscription")
      */
     private $subscriptionPayments;
 

@@ -42,7 +42,7 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\OneToMany(targetEntity=Subscription::class, mappedBy="user_id")
+     * @ORM\OneToMany(targetEntity=Subscription::class, mappedBy="user")
      */
     private $subscriptions;
 
