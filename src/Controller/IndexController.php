@@ -81,4 +81,6 @@ class IndexController extends AbstractController
             'userSubscriptionArray' => $userSubscriptionArray,
         ]);
     }
+
+    
 }
