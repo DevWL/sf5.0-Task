@@ -47,21 +47,21 @@ class SubscriptionPaymentRepository extends ServiceEntityRepository
     // PURE SQL QUERY TO FIND ONLY NEWEST PAYMENT DATE
     // SELECT s.id, s.status, sp.id, MAX(sp.date) FROM subscription s RIGHT JOIN subscription_payment sp ON s.id = sp.subscription_id GROUP BY s.id
 
-    /**
-     * @param $value
-     * @return void
-     */
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
+//    /**
+//     * @param $value
+//     * @return void
+//     */
+//    public function findByExampleField($value)
+//    {
+//        return $this->createQueryBuilder('s')
+//            ->andWhere('s.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->orderBy('s.id', 'ASC')
+//            ->setMaxResults(10)
+//            ->getQuery()
+//            ->getResult()
+//        ;
+//    }
 
     /*
     public function findOneBySomeField($value): ?SubscriptionPayment

@@ -4,11 +4,11 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mailer\MailerInterface;
 use App\Entity\SubscriptionPayment;
+use App\Service\EmailWrapper;
 use App\Entity\Subscription;
 use App\Entity\User;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 
 class IndexController extends AbstractController
 {
@@ -17,11 +17,10 @@ class IndexController extends AbstractController
      */
     public function index(MailerInterface $mailer)
     {
-        $title = "index action";
         // Get Subscription with id(1) and if car is valid then change "new" value to "active"
         $id = 1;
+
         try {
-            // dump($this->getEntityManager());die;
             $em = $this->getDoctrine()->getManager();
             $subscription = $em
                 ->getRepository(Subscription::class)
@@ -30,13 +29,9 @@ class IndexController extends AbstractController
                 $subscription->setStatus("new");
                 $em->flush();
                 $this->addFlash('message', 'Your subscription is now active');
-                // fake send email on form validation
-                $email = (new Email())
-                    ->from('office@company.com')
-                    ->to('userEntityEmail@gmail.com')
-                    ->subject('Your Subscription is now active!')
-                    ->html('<p>Thank you for your payment. Your subscription is now active! ...</p>');
-                // $mailer->send($email);
+                $email = new EmailWrapper($mailer);
+                $email->fakeSendEmail();
+                $this->addFlash('message', 'Email sent');
             }else{
                 $this->addFlash('message', 'Invalid card number');
             }
@@ -55,7 +50,8 @@ class IndexController extends AbstractController
         }
 
         return $this->render('index/index.html.twig', [
-            'title' => $title . ' ' . $status,
+            'title' => 'IndexController > index Action<br/>' . ' ' . $status,
+            'form' => ''
         ]);
     }
 }
