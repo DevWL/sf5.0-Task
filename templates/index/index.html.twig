@@ -10,9 +10,8 @@
 
 <div class="example-wrapper">
     <h1>{{ title|raw }} ✅</h1>
-{#    {{ form(form) }}#}
 
-    {{ form_start(form) }}
+    {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
     <div class="my-custom-class-for-errors">
         {{ form_errors(form) }}
     </div>
@@ -21,6 +20,21 @@
         <div class="col" id="cardNumber">
             {{ form_row(form.cardNumber) }}
         </div>
+        {% if form.cardNumberMS is defined %}
+            <div class="col" id="cardNumberMS">
+                {{ form_row(form.cardNumberMS) }}
+            </div>
+        {% endif %}
+        {% if form.cardNumberVI is defined %}
+            <div class="col" id="cardNumberVI">
+                {{ form_row(form.cardNumberVI) }}
+            </div>
+        {% endif %}
+        {% if form.cardNumberAE is defined %}
+            <div class="col" id="cardNumberAE">
+                {{ form_row(form.cardNumberAE) }}
+            </div>
+        {% endif %}
         <div class="col" id="cvvNumber">
             {{ form_row(form.cvvNumber) }}
         </div>

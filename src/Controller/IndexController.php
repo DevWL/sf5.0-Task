@@ -39,7 +39,14 @@ class IndexController extends AbstractController
         if($form->isSubmitted() && $form->isValid()){
             /** @var CCPayFormType $cCPayFormData */
             $cCPayFormData = $form->getData();
-            //dd($cCPayFormData);die;
+            // $form->get('serialNumber')->setData($serial_number);
+            // $form->setTempChoice($cCPayFormData->getCardType());
+            // $form->get('tempChoice')->setData($cCPayFormData->getCardType());
+            // $form->get('tempChoice')->getData($cCPayFormData->getCardType());
+            $cardType = $form->get('cardType')->getData();
+            dump($cCPayFormData);
+            dump($cardType);
+
             /**
              * Assuming that Subscription does exists for that User before making payment
              * (otherwise we would need to create a new Subscription and set its status to "active" skipping "new" state)
@@ -66,7 +73,7 @@ class IndexController extends AbstractController
 
             $newSubscriptionPayment = new SubscriptionPayment($subscription);
             $newSubscriptionPayment->setSubscription($subscription)
-                ->setChargedAmount($cCPayFormData->getPackage()) // dummy data TODO get data from submitted form $form->getPackage()
+                ->setChargedAmount($cCPayFormData->getPackage()) // use submitted form data
                 ->setDate($date)
                 ->setCreatedAt($date);
             $em->persist($newSubscriptionPayment);
@@ -78,9 +85,10 @@ class IndexController extends AbstractController
             $this->addFlash('message', 'Your subscription is now active');
             $this->addFlash('message', 'Email sent');
 
-            return $this->redirectToRoute('index');
+            // return $this->redirectToRoute('index');
 
         }else{
+            /* Remove me */
             dump('form data not validated or sent');
             if (!$form->isSubmitted()) dump('form data not submitted');
             if ($form->isSubmitted()) {
