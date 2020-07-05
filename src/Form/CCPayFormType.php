@@ -120,9 +120,15 @@ class CCPayFormType extends AbstractType
                     'MasterCard' => 'MS',
                     'Visa' => 'VI',
                     'AmericanExpress'=> 'AE',
-                ],'required' => false,
+                ],
             ])
-            ->add('package', ChoiceType::class, ['choices'=> ["Basic" => 1500, "Standard" => 2300, "Pro"=> 3000]])
+            ->add('package', ChoiceType::class, [
+                'choices'=> [
+                    "Basic - 1500 zł" => 1500,
+                    "Standard - 2300 zł" => 2300,
+                    "Pro - 3000 zł"=> 3000
+                ],
+            ])
             ->add('send', SubmitType::class)
         ;
     }

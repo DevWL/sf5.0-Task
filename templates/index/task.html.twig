@@ -18,8 +18,18 @@
             </p>
         </div>
     </div>
-
-    <h1>Task description</h1>
+    <div class="dec">
+        <h2>The problem:</h2>
+        <ul>
+            <li>One subscription can have many payments. We need to get the latest payments info and based only on newest payment date change subscription status.</li>
+            <li>The users who have accounts can have assign subscriptions without making any payments.</li>
+            <li>Symfony command "php bin/console app:cancel-inactive" run two complex composed queries, covering both subscription scenarios (with and without payment record)</li>
+            <li>Validate payment form based on selected dropdown field</li>
+            <li>If form is valid update subscription and adding new payment record</li>
+            <li>Probably i should refactor this code! It might be a little bit messy :)</li>
+        </ul>
+    </div>
+    <h2>Task description</h2>
     <pre>
     ZADANIE:
     Use case: Użytkownik aktywuje co miesięczną odnawialną subskrypcję
@@ -81,17 +91,6 @@
     metod, ale MUSI w pełni pokazać logikę działania, powinien korzystać z
     mechanizmów frameworka Symfony.
 
-</pre>
-<div class="dec">
-    <h2>The problem:</h2>
-    <ul>
-        <li>One subscription can have many payments. We need to get the latest payments info and based only on newest payment date change subscription status.</li>
-        <li>The users who have accounts can have assign subscriptions without making any payments.</li>
-        <li>Symfony command "php bin/console app:cancel-inactive" run two complex composed queries, covering both subscription scenarios (with and without payment record)</li>
-        <li>Validate payment form based on selected dropdown field</li>
-        <li>If form is valid update subscription and adding new payment record</li>
-        <li>Probably i should refactor this code! It might be a little bit messy :)</li>
-    </ul>
-</div>
+    </pre>
 </div>
 {% endblock %}
