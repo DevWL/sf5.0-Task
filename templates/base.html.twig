@@ -14,6 +14,9 @@
         <div class="container">
             <ul class="nav nav-pills justify-content-end pb-1 pt-1">
                 <li class="nav-item">
+                    <a class="nav-link {% if app.request.get('_route') == 'task' %}active{% endif %}" href="{{ path('task') }}">Task Description</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if app.request.get('_route') == 'index' %}active{% endif %}" href="{{ path('index') }}">Pay Form</a>
                 </li>
                 <li class="nav-item">

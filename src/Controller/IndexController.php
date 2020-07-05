@@ -3,12 +3,18 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mailer\MailerInterface;
 use App\Entity\SubscriptionPayment;
 use App\Service\EmailWrapper;
 use App\Entity\Subscription;
 use App\Entity\User;
+use App\Form\CCPayFormType;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class IndexController extends AbstractController
 {
@@ -19,6 +25,39 @@ class IndexController extends AbstractController
     {
         // Get Subscription with id(1) and if car is valid then change "new" value to "active"
         $id = 1;
+
+        /*> FORM SETUP */
+        $defaultData = ['message' => 'Type your message here'];
+
+        $form = $this->createFormBuilder($defaultData)
+            ->add('cardNumber', TextType::class, [
+                'constraints' => new Length(['min' => 3]),
+            ])
+            ->add('cvvNumber', TextType::class, [
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['min' => 3]),
+                ],
+            ])
+            ->add('cardType', ChoiceType::class, ["choices"=> ["MasterCard" => "MS", "Visa" => "VI", "AmericanExpress"=> "AE"]])
+            ->add('package', ChoiceType::class, ["choices"=> ["Basic" => 1500, "Standard" => 2300, "Pro"=> 3000]])
+            ->add('send', SubmitType::class)
+            ->getForm();
+
+        /*< FORM SETUP */
+
+        /*> FORM POPULATION */
+//        $form->get('cardNumber')->setData(12345678912345678);
+//        $form->get('cvvNumber')->setData(111);
+//        $form->get('CardType')->setData();
+        /*> FORM POPULATION */
+
+        /*> FORM SUBMIT */
+        if ($form->isSubmitted() && $form->isValid()) {
+            // data is an array with "name", "email", and "message" keys
+            $data = $form->getData();
+        }
+        /*< FORM SUBMIT */
 
         try {
             $em = $this->getDoctrine()->getManager();
@@ -51,7 +90,17 @@ class IndexController extends AbstractController
 
         return $this->render('index/index.html.twig', [
             'title' => 'IndexController > index Action<br/>' . ' ' . $status,
-            'form' => ''
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/task", name="task")
+     */
+    public function task()
+    {
+        return $this->render('index/task.html.twig', [
+            'title' => 'IndexController > task Action',
         ]);
     }
 }
