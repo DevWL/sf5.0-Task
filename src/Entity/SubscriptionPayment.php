@@ -107,9 +107,9 @@ class SubscriptionPayment
     public function setCreatedAt(\DateTimeInterface $created_at = NULL): self
     {
         if($created_at) {
-            $this->updated_at = $updated_at;
+            $this->created_at = $created_at;
         }else{
-            $this->updated_at = new \DateTime('NOW');
+            $this->created_at = new \DateTime('NOW');
         }
 
         return $this;

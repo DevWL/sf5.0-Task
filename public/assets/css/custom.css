@@ -5,9 +5,28 @@ span.data.description{
     border-radius: 5px;
 }
 
+div.wrap{
+    display: flex;
+    justify-content: flex-end;
+}
+
 div.info-block{
+    /*align-self: flex-end;*/
+    /*align-items: flex-end;*/
     font-size: 0.7em;
-    padding: 3px 5px;
-    background: rgb(240,240,240);
+    padding: 20px;
+    background: rgb(100,250,100);
     border-radius: 5px;
+}
+
+div.info-block p {
+    margin: 0px;
+}
+
+ul.li-no-dots {
+    list-style-type: none;
+}
+
+ul.li-no-dots li{
+    padding: 5px;
 }

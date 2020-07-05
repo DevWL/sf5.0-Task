@@ -10,10 +10,14 @@
 
 <div class="example-wrapper">
     <h1>{{ title }}</h1>
-    <p>You can change dummy data ($userId = 1) in userSubscriptions Action</p>
+    <ul>
+        <li>You can change dummy data ($userId = 1) in userSubscriptions Action</li>
+        <li>Users can stop and reactivate their subscriptions only if they are paid and not expired.</li>
+        <li>Users with ending subscription on action (stopping | reactivating) will be noticed that their subscription will end in X number of days (if less then 7 days).</li>
+    </ul>
 
     {% for sub in userSubscriptionArray %}
-        <ul>
+        <ul class="li-no-dots">
         <li>Hello! {{ sub.user.username }}</li>
         <li><span class="data description">Subscription id:</span> {{ sub.id }}</li>
             {% if sub.status != 'stopped' %}
@@ -23,8 +27,8 @@
             {% endif %}
         <li><span class="data description">status:</span> {{ sub.status }}</li>
         <li><span class="data description">started at:</span> {{ sub.startedAt | date('Y-m-d') }}
-            <li>Billing history</li>
-            <ul>
+            <ul class="li-no-dots">
+                <li>Billing history</li>
                 {% for subPay in sub.subscriptionPayments %}
                 <li><span class="data description">id:</span> {{ subPay.id }} <span class="data description">amount:</span> {{ subPay.chargedamount }} zł <span class="data description">at:</span> {{ subPay.date | date('Y-m-d') }}</li>
                 {% endfor %}
