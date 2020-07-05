@@ -9,7 +9,8 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>{{ title }} ✅</h1>
+    <h1>{{ title }}</h1>
+    <p>You can change dummy data ($userId = 1) in userSubscriptions Action</p>
 
     {% for sub in userSubscriptionArray %}
         <ul>
@@ -27,7 +28,7 @@
                 {% for subPay in sub.subscriptionPayments %}
                 <li><span class="data description">id:</span> {{ subPay.id }} <span class="data description">amount:</span> {{ subPay.chargedamount }} zł <span class="data description">at:</span> {{ subPay.date | date('Y-m-d') }}</li>
                 {% endfor %}
-                <a href="{{ path('subscription_payment', {id: sub.id}) }}"><button class="btn btn-success">pay</button></a>
+                <a href="{{ path('index') }}"><button class="btn btn-success">pay</button></a>
             </ul>
         </ul>
     {% endfor %}

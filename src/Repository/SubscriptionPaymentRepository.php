@@ -19,12 +19,19 @@ class SubscriptionPaymentRepository extends ServiceEntityRepository
         parent::__construct($registry, SubscriptionPayment::class);
     }
 
+    /**
+     * @param $id
+     * @return int|NULL
+     */
     public function daysLeftToSubsEnd($id){
         $dql = "SELECT subPay.date 
             FROM App\Entity\SubscriptionPayment subPay 
             WHERE subPay.subscription = {$id} 
             ORDER BY subPay.date DESC";
         $query = $this->getEntityManager()->createQuery($dql)->setMaxResults(1)->getResult();
+        if($query === []){
+            return NULL;
+        }
 
         /* @var \DateTime $lastPayment */
         $lastPayment = $query[0]['date'];

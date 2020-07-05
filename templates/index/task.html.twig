@@ -9,22 +9,31 @@
 </style>
 
 <div class="example-wrapper">
+    <div class="info-block">
+        <p>
+            [!] Fixture for task created. Run:<br/>
+            php bin/console doctrine:migrations:migrate<br/>
+            php bin/console doctrine:fixtures:load
+        </p>
+    </div>
+
     <h1>Task description</h1>
-<pre>
+    <pre>
     ZADANIE:
     Use case: Użytkownik aktywuje co miesięczną odnawialną subskrypcję
     na produkt.
+
         create table subscription
         (
-        id int auto_increment primary key,
-        user_id int not null,
-        subscription_shipping_address_id int null,
-        subscription_billing_address_id int null,
-        status varchar(16) default 'new' not null,
-        subscription_pack_id int not null,
-        started_at datetime null,
-        updated_at datetime null,
-        created_at datetime not null
+            id int auto_increment primary key,
+            user_id int not null,
+            subscription_shipping_address_id int null,
+            subscription_billing_address_id int null,
+            status varchar(16) default 'new' not null,
+            subscription_pack_id int not null,
+            started_at datetime null,
+            updated_at datetime null,
+            created_at datetime not null
         );
 
     INSERT INTO subscription (1,1,1,1,"new",5,null,null,NOW());
@@ -35,13 +44,12 @@
 
         create table subscription_payment
         (
-        id int auto_increment primary key,
-        subscription_id int null,
-
-        charged_amount int not null,
-        date date not null,
-        updated_at datetime null,
-        created_at datetime not null
+            id int auto_increment primary key,
+            subscription_id int null,
+            charged_amount int not null,
+            date date not null,
+            updated_at datetime null,
+            created_at datetime not null
         );
 
     INSERT INTO subscription_payment (1,2,2400,"2017-04-01",null,NOW());
@@ -50,22 +58,25 @@
 
     1. Stwórz formularz z polami: CardNumber, CvvNumber, CardType
     (MasterCard [MS], Visa [VI], AmericanExpress [AE]).
+
     2. Zwaliduj numer karty kredytowej: sprawdź długość numeru oraz
     zależność typu karty z numerem.
+
     3. Po poprawnym zwalidowaniu danych karty, zmień status subskrypcji
     (id=1) na `active`. Podczas aktywowania wyślij email z informacją o
     aktywacji do użytkownika (nie wysyłaj go fizycznie, wystarczy pusta
     metoda).
+
     4. Stwórz command, który będzie anulował subskrypcje dla których nie
     odnotowano płatności w terminie 7 dni od daty ich końca, zakładając,
     że jeden miesiąc to równo 30 dni.
+
     5. Stwórz akcję w kontrolerze, która będzie obsługiwała sekcję
     "Subskrypcji" w ustawieniach konta użytkownika - innymi słowy, lista
     subskrypcji pojedynczego użytkownika, którymi ten może zarządzać.
 
     Kod NIE musi działać, NIE musi w pełni implementować wszystkich
-    metod, ale
-    MUSI w pełni pokazać logikę działania, powinien korzystać z
+    metod, ale MUSI w pełni pokazać logikę działania, powinien korzystać z
     mechanizmów frameworka Symfony.
 </pre>
 </div>

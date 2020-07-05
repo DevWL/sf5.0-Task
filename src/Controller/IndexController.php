@@ -3,93 +3,93 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mailer\MailerInterface;
-use App\Entity\SubscriptionPayment;
 use App\Service\EmailWrapper;
+use App\Entity\SubscriptionPayment;
 use App\Entity\Subscription;
 use App\Entity\User;
 use App\Form\CCPayFormType;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class IndexController extends AbstractController
 {
     /**
      * @Route("/", name="index")
      */
-    public function index(MailerInterface $mailer)
+    public function index(MailerInterface $mailer, Request $request)
     {
-        // Get Subscription with id(1) and if car is valid then change "new" value to "active"
-        $id = 1;
+        /**
+         *  Dummy data
+         */
+        $subsID = 1; /* Task requirement! - Get Subscription with id == 1 */
+        $userID = 1; /* Get User id == 1 */
+        $date = new \DateTime('NOW'); /* Get Subscription with id(1) and if car is valid then change "new" value to "active" */
 
-        /*> FORM SETUP */
-        $defaultData = ['message' => 'Type your message here'];
+        /**
+         * Create, validate and insert form data
+         */
+        $form = $this->createForm(CCPayFormType::class);
+        $form->handleRequest($request);
 
-        $form = $this->createFormBuilder($defaultData)
-            ->add('cardNumber', TextType::class, [
-                'constraints' => new Length(['min' => 3]),
-            ])
-            ->add('cvvNumber', TextType::class, [
-                'constraints' => [
-                    new NotBlank(),
-                    new Length(['min' => 3]),
-                ],
-            ])
-            ->add('cardType', ChoiceType::class, ["choices"=> ["MasterCard" => "MS", "Visa" => "VI", "AmericanExpress"=> "AE"]])
-            ->add('package', ChoiceType::class, ["choices"=> ["Basic" => 1500, "Standard" => 2300, "Pro"=> 3000]])
-            ->add('send', SubmitType::class)
-            ->getForm();
-
-        /*< FORM SETUP */
-
-        /*> FORM POPULATION */
-//        $form->get('cardNumber')->setData(12345678912345678);
-//        $form->get('cvvNumber')->setData(111);
-//        $form->get('CardType')->setData();
-        /*> FORM POPULATION */
-
-        /*> FORM SUBMIT */
-        if ($form->isSubmitted() && $form->isValid()) {
-            // data is an array with "name", "email", and "message" keys
-            $data = $form->getData();
-        }
-        /*< FORM SUBMIT */
-
-        try {
+        /**
+         * Update Subscription (use dummy data)
+         * Insert new SubscriptionPayment
+         */
+        if($form->isSubmitted() && $form->isValid()){
+            /** @var CCPayFormType $cCPayFormData */
+            $cCPayFormData = $form->getData();
+            //dd($cCPayFormData);die;
+            /**
+             * Assuming that Subscription does exists for that User before making payment
+             * (otherwise we would need to create a new Subscription and set its status to "active" skipping "new" state)
+             * - updating existing subscription AND adding new SubscriptionPayment for that Subscription
+             */
             $em = $this->getDoctrine()->getManager();
+
+            /* @var Subscription $subscription */
             $subscription = $em
                 ->getRepository(Subscription::class)
-                ->find($id);
-            if('cars is valid' === 1){
-                $subscription->setStatus("new");
-                $em->flush();
-                $this->addFlash('message', 'Your subscription is now active');
-                $email = new EmailWrapper($mailer);
-                $email->fakeSendEmail();
-                $this->addFlash('message', 'Email sent');
-            }else{
-                $this->addFlash('message', 'Invalid card number');
-            }
+                ->find($subsID); // dummy data
 
-            if (!$subscription) {
-                $this->addFlash('message', 'Subscription id not found');
-                throw $this->createNotFoundException(
-                    'No Subscription found for id '.$id
-                );
-            }
+            $user = $em
+                ->getRepository(User::class)
+                ->find($userID); // dummy data
 
-            $status = $subscription->getStatus();
+            /**
+             * Setting only required fields
+             */
+            $subscription->setStatus("active");
+            $subscription->setSubscriptionPackId(rand(10,100)); // dummy data
+            $subscription->setUser($user);
+            $subscription->getStartedAt();
 
-        }catch (\Exception $e){
-            $status = "Status is not available";
+            $newSubscriptionPayment = new SubscriptionPayment($subscription);
+            $newSubscriptionPayment->setSubscription($subscription)
+                ->setChargedAmount($cCPayFormData->getPackage()) // dummy data TODO get data from submitted form $form->getPackage()
+                ->setDate($date)
+                ->setCreatedAt($date);
+            $em->persist($newSubscriptionPayment);
+            $em->flush();
+
+            $email = new EmailWrapper($mailer);
+            $email->fakeSendEmail();
+
+            $this->addFlash('message', 'Your subscription is now active');
+            $this->addFlash('message', 'Email sent');
+
+            return $this->redirectToRoute('index');
+
+        }else{
+            dump('form data not validated or sent');
+            if (!$form->isSubmitted()) dump('form data not submitted');
+            if ($form->isSubmitted()) {
+                if (!$form->isValid()) dump('form data not Valid but was Submitted');
+            };
         }
 
         return $this->render('index/index.html.twig', [
-            'title' => 'IndexController > index Action<br/>' . ' ' . $status,
+            'title' => 'IndexController > index Action',
             'form' => $form->createView()
         ]);
     }

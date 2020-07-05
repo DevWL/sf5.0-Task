@@ -10,6 +10,34 @@
 
 <div class="example-wrapper">
     <h1>{{ title|raw }} ✅</h1>
-    {{ form(form) }}
+{#    {{ form(form) }}#}
+
+    {{ form_start(form) }}
+    <div class="my-custom-class-for-errors">
+        {{ form_errors(form) }}
+    </div>
+
+    <div class="row">
+        <div class="col" id="cardNumber">
+            {{ form_row(form.cardNumber) }}
+        </div>
+        <div class="col" id="cvvNumber">
+            {{ form_row(form.cvvNumber) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col" id="cardType">
+            {{ form_row(form.cardType) }}
+        </div>
+        <div class="col" id="package">
+            {{ form_row(form.package) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col" id="send">
+            {{ form_row(form.send) }}
+        </div>
+    </div>
+    {{ form_end(form) }}
 </div>
 {% endblock %}

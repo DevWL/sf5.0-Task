@@ -88,9 +88,13 @@ class SubscriptionPayment
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    public function setUpdatedAt(?\DateTimeInterface $updated_at = NULL): self
     {
-        $this->updated_at = $updated_at;
+        if($updated_at) {
+            $this->updated_at = $updated_at;
+        }else{
+            $this->updated_at = new \DateTime('NOW');
+        }
 
         return $this;
     }
@@ -100,9 +104,13 @@ class SubscriptionPayment
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeInterface $created_at): self
+    public function setCreatedAt(\DateTimeInterface $created_at = NULL): self
     {
-        $this->created_at = $created_at;
+        if($created_at) {
+            $this->updated_at = $updated_at;
+        }else{
+            $this->updated_at = new \DateTime('NOW');
+        }
 
         return $this;
     }
