@@ -21,6 +21,7 @@ class IndexController extends AbstractController
         // Get Subscription with id(1) and if car is valid then change "new" value to "active"
         $id = 1;
         try {
+            // dump($this->getEntityManager());die;
             $em = $this->getDoctrine()->getManager();
             $subscription = $em
                 ->getRepository(Subscription::class)
