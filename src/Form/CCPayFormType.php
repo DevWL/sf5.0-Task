@@ -28,8 +28,159 @@ class CCPayFormType extends AbstractType
     private $package;
     private $tempChoice;
 
+//    public function __construct($someDependency)
+//    {
+//        $this->someDependency = $someDependency;
+//    }
 
-/* Luhn algorithm number checker - (c) 2005-2008 shaman - www.planzero.org */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => CCPayFormType::class,
+            //'empty_data' => ;
+        ]);
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('cardNumber', IntegerType::class, [
+                'constraints' => new Length(['min' => 13, 'max' => 16]),
+                'required' => false, // remove after testing
+                'constraints' => [
+                    new Regex([
+                        'pattern'   => '/^(5[1-5]\d{14})|(4\d{12}(?:\d{3})?)|(3[47]\d{13})$/', // we should also validate all cards num checksum === 10 (It could be done by create custom Validation Constrain) and implement $this->>luhnCheck() functionality
+                        'match'     => true,
+                        'message'   => 'Nieprawidłowy numer karty'
+                    ])
+                ]
+            ])
+            ->add('cvvNumber', IntegerType::class, [
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['min' => 3, 'max'=> 7]),
+                ],
+            ])
+            ->add('package', ChoiceType::class, [
+                'choices'=> [
+                    "Basic - 1500 zł" => 1500,
+                    "Standard - 2300 zł" => 2300,
+                    "Pro - 3000 zł"=> 3000
+                ],
+            ])
+            ->add('cardType', ChoiceType::class, [
+                'placeholder' => 'Select card',
+                'choices'=> [
+                    'MasterCard' => 'MS',
+                    'Visa' => 'VI',
+                    'AmericanExpress'=> 'AE',
+                ],
+            ])
+            ->add('cardNumberMS', IntegerType::class, [
+                'label' => 'MasterCard',
+                'constraints' => new Length(['min' => 16, 'max' => 16]),
+                'required' => false, // remove after testing
+                'constraints' => [
+                    new Regex([
+                        'pattern'   => '/^5[1-5]\d{14}$/', // we should also validate all cards num checksum === 10 (It could be done by create custom Validation Constrain) and implement $this->>luhnCheck() functionality
+                        'match'     => true,
+                        'message'   => 'Nieprawidłowy numer karty MasterCard'
+                    ])
+                ]
+            ])
+            ->add('cardNumberVI', IntegerType::class, [
+                'label' => 'VISA',
+                'constraints' => new Length(['min' => 13, 'max' => 16]),
+                'required' => false, // remove after testing
+                'constraints' => [
+                    new Regex([
+                        'pattern'   => '/^4\d{12}(?:\d{3})?$/',
+                        'match'     => true,
+                        'message'   => 'Nieprawidłowy numer karty VISA'
+                    ])
+                ]
+            ])
+            ->add('cardNumberAE', IntegerType::class, [
+                'label' => 'American Express',
+                'constraints' => new Length(['min' => 15, 'max' => 15]),
+                'required' => false, // remove after testing
+                'constraints' => [
+                    new Regex([
+                        'pattern'   => '/^3[47]\d{13}$/',
+                        'match'     => true,
+                        'message'   => 'Nieprawidłowy numer karty American Express'
+                    ])
+                ]
+            ])
+            ->add('send', SubmitType::class)
+        ;
+
+        dump($this); //test
+        dump($options); //test
+        $this->getSelectedCardChoice($builder, 'VI'); // render another input field based on dynamic value passed
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param string|null $choiceValue
+     * This method should take dynamic value from submitted form and based of that it adds field with requested card type.
+     * Just need to figure out how to get this value to the FormType class.
+     */
+    private function getSelectedCardChoice(FormBuilderInterface $builder, string $choiceValue = null)
+    {
+
+        // this fields should be dynamically selected based on the choice dropdown!
+        $choiceValue = $choiceValue ?? "MS";
+        switch ($choiceValue) {
+            case "MS":
+                $builder->add('cardNumberMS', IntegerType::class, [
+                    'label' => 'MasterCard',
+                    'constraints' => new Length(['min' => 16, 'max' => 16]),
+                    'required' => false, // remove after testing
+                    'constraints' => [
+                        new Regex([
+                            'pattern'   => '/^5[1-5]\d{14}$/', // we should also validate checksum === 10 (We should create custom Validation Constrain) and implement $this->>luhnCheck() functionality
+                            'match'     => true,
+                            'message'   => 'Nieprawidłowy numer karty MasterCard'
+                        ])
+                    ]
+                ]);
+                break;
+            case "VI":
+                $builder->add('cardNumberVI', IntegerType::class, [
+                    'label' => 'VISA',
+                    'constraints' => new Length(['min' => 13, 'max' => 16]),
+                    'required' => false, // remove after testing
+                    'constraints' => [
+                        new Regex([
+                            'pattern'   => '/^4\d{12}(?:\d{3})?$/',
+                            'match'     => true,
+                            'message'   => 'Nieprawidłowy numer karty VISA'
+                        ])
+                    ]
+                ]);
+                break;
+            case "AE":
+                $builder->add('cardNumberAE', IntegerType::class, [
+                    'label' => 'American Express',
+                    'constraints' => new Length(['min' => 15, 'max' => 15]),
+                    'required' => false, // remove after testing
+                    'constraints' => [
+                        new Regex([
+                            'pattern'   => '/^3[47]\d{13}$/',
+                            'match'     => true,
+                            'message'   => 'Nieprawidłowy numer karty American Express'
+                        ])
+                    ]
+                ]);
+                break;
+            default:
+                echo "Not MS, VI, AE ?";
+                break;
+        }
+    }
+
+    /* Luhn algorithm number checker - (c) 2005-2008 shaman - www.planzero.org */
     private function luhnCheck($cardNum, $checkSum = 10) {
 
         // Strip any non-digits (useful for credit card numbers with spaces and hyphens)
@@ -205,146 +356,6 @@ class CCPayFormType extends AbstractType
     {
         $this->package = $package;
         return $this;
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => CCPayFormType::class,
-        ]);
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder
-            ->add('cardNumber', IntegerType::class, [
-                'constraints' => new Length(['min' => 13, 'max' => 16]),
-                'required' => false, // remove after testing
-                'constraints' => [
-                    new Regex([
-                        'pattern'   => '/^(5[1-5]\d{14})|(4\d{12}(?:\d{3})?)|(3[47]\d{13})$/', // we should also validate all cards num checksum === 10 (It could be done by create custom Validation Constrain) and implement $this->>luhnCheck() functionality
-                        'match'     => true,
-                        'message'   => 'Nieprawidłowy numer karty'
-                    ])
-                ]
-            ])
-            ->add('cvvNumber', IntegerType::class, [
-                'constraints' => [
-                    new NotBlank(),
-                    new Length(['min' => 3, 'max'=> 7]),
-                ],
-            ])
-            ->add('package', ChoiceType::class, [
-                'choices'=> [
-                    "Basic - 1500 zł" => 1500,
-                    "Standard - 2300 zł" => 2300,
-                    "Pro - 3000 zł"=> 3000
-                ],
-            ])
-            ->add('cardType', ChoiceType::class, [
-                'placeholder' => 'Select card',
-                'choices'=> [
-                    'MasterCard' => 'MS',
-                    'Visa' => 'VI',
-                    'AmericanExpress'=> 'AE',
-                ],
-            ])
-            ->add('cardNumberMS', IntegerType::class, [
-                'label' => 'MasterCard',
-                'constraints' => new Length(['min' => 16, 'max' => 16]),
-                'required' => false, // remove after testing
-                'constraints' => [
-                    new Regex([
-                        'pattern'   => '/^5[1-5]\d{14}$/', // we should also validate all cards num checksum === 10 (It could be done by create custom Validation Constrain) and implement $this->>luhnCheck() functionality
-                        'match'     => true,
-                        'message'   => 'Nieprawidłowy numer karty MasterCard'
-                    ])
-                ]
-            ])
-            ->add('cardNumberVI', IntegerType::class, [
-                'label' => 'VISA',
-                'constraints' => new Length(['min' => 13, 'max' => 16]),
-                'required' => false, // remove after testing
-                'constraints' => [
-                    new Regex([
-                        'pattern'   => '/^4\d{12}(?:\d{3})?$/',
-                        'match'     => true,
-                        'message'   => 'Nieprawidłowy numer karty VISA'
-                    ])
-                ]
-            ])
-            ->add('cardNumberAE', IntegerType::class, [
-                'label' => 'American Express',
-                'constraints' => new Length(['min' => 15, 'max' => 15]),
-                'required' => false, // remove after testing
-                'constraints' => [
-                    new Regex([
-                        'pattern'   => '/^3[47]\d{13}$/',
-                        'match'     => true,
-                        'message'   => 'Nieprawidłowy numer karty American Express'
-                    ])
-                ]
-            ])
-            ->add('send', SubmitType::class)
-        ;
-
-        dump($this);
-        dump($options);
-        $this->getSelectedCardChoice($builder, 'VI');
-    }
-
-    private function getSelectedCardChoice(FormBuilderInterface $builder, string $choiceValue = null)
-    {
-
-        // this fields should be dynamically selected based on the choice dropdown!
-        $choiceValue = $choiceValue ?? "MS";
-        switch ($choiceValue) {
-            case "MS":
-                $builder->add('cardNumberMS', IntegerType::class, [
-                    'label' => 'MasterCard',
-                    'constraints' => new Length(['min' => 16, 'max' => 16]),
-                    'required' => false, // remove after testing
-                    'constraints' => [
-                        new Regex([
-                            'pattern'   => '/^5[1-5]\d{14}$/', // we should also validate checksum === 10 (We should create custom Validation Constrain) and implement $this->>luhnCheck() functionality
-                            'match'     => true,
-                            'message'   => 'Nieprawidłowy numer karty MasterCard'
-                        ])
-                    ]
-                ]);
-                break;
-            case "VI":
-                $builder->add('cardNumberVI', IntegerType::class, [
-                    'label' => 'VISA',
-                    'constraints' => new Length(['min' => 13, 'max' => 16]),
-                    'required' => false, // remove after testing
-                    'constraints' => [
-                        new Regex([
-                            'pattern'   => '/^4\d{12}(?:\d{3})?$/',
-                            'match'     => true,
-                            'message'   => 'Nieprawidłowy numer karty VISA'
-                        ])
-                    ]
-                ]);
-                break;
-            case "AE":
-                $builder->add('cardNumberAE', IntegerType::class, [
-                    'label' => 'American Express',
-                    'constraints' => new Length(['min' => 15, 'max' => 15]),
-                    'required' => false, // remove after testing
-                    'constraints' => [
-                        new Regex([
-                            'pattern'   => '/^3[47]\d{13}$/',
-                            'match'     => true,
-                            'message'   => 'Nieprawidłowy numer karty American Express'
-                        ])
-                    ]
-                ]);
-                break;
-            default:
-                echo "Not MS, VI, AE ?";
-                break;
-        }
     }
 
 }

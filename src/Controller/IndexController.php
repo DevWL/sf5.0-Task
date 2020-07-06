@@ -39,13 +39,16 @@ class IndexController extends AbstractController
         if($form->isSubmitted() && $form->isValid()){
             /** @var CCPayFormType $cCPayFormData */
             $cCPayFormData = $form->getData();
-            // $form->get('serialNumber')->setData($serial_number);
-            // $form->setTempChoice($cCPayFormData->getCardType());
-            // $form->get('tempChoice')->setData($cCPayFormData->getCardType());
-            // $form->get('tempChoice')->getData($cCPayFormData->getCardType());
             $cardType = $form->get('cardType')->getData();
-            dump($cCPayFormData);
-            dump($cardType);
+
+            dump($cCPayFormData); //test
+            dump($cardType); //test
+
+            // render form again before any db insert
+            // try to keep fields from submited form
+            if($cardType){
+
+            }
 
             /**
              * Assuming that Subscription does exists for that User before making payment

@@ -19,25 +19,25 @@ class AppFixtures extends Fixture
             [
                 "name" => "Rob",
                 "pass" => $pass,
-                "role" => ["customer"],
+                "role" => ["ROLE_USER"],
                 "email" => "rob@gmail.com"
             ],
             [
                 "name" => "Bob",
                 "pass" => $pass,
-                "role" => ["customer"],
+                "role" => ["ROLE_USER"],
                 "email" => "bob@gmail.com"
             ],
             [
                 "name" => "Ana",
                 "pass" => $pass,
-                "role" => ["customer"],
+                "role" => ["ROLE_USER"],
                 "email" => "ana@gmail.com"
             ],
             [
                 "name" => "Joy",
                 "pass" => $pass,
-                "role" => ["customer"],
+                "role" => ["ROLE_USER"],
                 "email" => "joy@gmail.com"
             ]
         ];
