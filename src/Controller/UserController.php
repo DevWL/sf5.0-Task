@@ -8,7 +8,6 @@ use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 class UserController extends AbstractController
 {
@@ -33,7 +32,7 @@ class UserController extends AbstractController
         /* @var Subscription[] $userSubscriptionArray */
         $userSubscriptionArray = $subscriptions->toArray();
 
-        return $this->render('user/userSubscriptions.html.twig', [
+        return $this->render('user/user-subscriptions.html.twig', [
             'title' => 'UserController > userSubscriptions Action',
             'userSubscriptionArray' => $userSubscriptionArray,
         ]);
