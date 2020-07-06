@@ -40,49 +40,57 @@ class IndexController extends AbstractController
             /** @var CCPayFormType $cCPayFormData */
             $cCPayFormData = $form->getData();
             $cardType = $form->get('cardType')->getData();
-
-            // dump($cCPayFormData); //test
-            // dump($cardType); //test
+            dump($cCPayFormData->getCardNumberAE());
 
             /**
-             * Assuming that Subscription does exists for that User before making payment
-             * (otherwise we would need to create a new Subscription and set its status to "active" skipping "new" state)
-             * - updating existing subscription AND adding new SubscriptionPayment for that Subscription
+             * Prevent to submit form with no card fields
              */
-            $em = $this->getDoctrine()->getManager();
+            if($cCPayFormData->getCardNumberAE() != null || $cCPayFormData->getCardNumberVI() != null || $cCPayFormData->getCardNumberAE() != null) {
 
-            /* @var Subscription $subscription */
-            $subscription = $em
-                ->getRepository(Subscription::class)
-                ->find($subsID); // dummy data
+                // dump($cCPayFormData); //test
+                // dump($cardType); //test
 
-            $user = $em
-                ->getRepository(User::class)
-                ->find($userID); // dummy data
+                /**
+                 * Assuming that Subscription does exists for that User before making payment
+                 * (otherwise we would need to create a new Subscription and set its status to "active" skipping "new" state)
+                 * - updating existing subscription AND adding new SubscriptionPayment for that Subscription
+                 */
+                $em = $this->getDoctrine()->getManager();
 
-            /**
-             * Setting only required fields
-             */
-            $subscription->setStatus("active");
-            $subscription->setSubscriptionPackId(rand(10,100)); // dummy data
-            $subscription->setUser($user);
-            $subscription->getStartedAt();
+                /* @var Subscription $subscription */
+                $subscription = $em
+                    ->getRepository(Subscription::class)
+                    ->find($subsID); // dummy data
 
-            $newSubscriptionPayment = new SubscriptionPayment($subscription);
-            $newSubscriptionPayment->setSubscription($subscription)
-                ->setChargedAmount($cCPayFormData->getPackage()) // use submitted form data
-                ->setDate($date)
-                ->setCreatedAt($date);
-            $em->persist($newSubscriptionPayment);
-            $em->flush();
+                $user = $em
+                    ->getRepository(User::class)
+                    ->find($userID); // dummy data
 
-            $email = new EmailWrapper($mailer);
-            $email->fakeSendEmail();
+                /**
+                 * Setting only required fields
+                 */
+                $subscription->setStatus("active");
+                $subscription->setSubscriptionPackId(rand(10, 100)); // dummy data
+                $subscription->setUser($user);
+                $subscription->getStartedAt();
 
-            $this->addFlash('message', 'Your subscription is now active');
-            $this->addFlash('message', 'Email sent');
+                $newSubscriptionPayment = new SubscriptionPayment($subscription);
+                $newSubscriptionPayment->setSubscription($subscription)
+                    ->setChargedAmount($cCPayFormData->getPackage()) // use submitted form data
+                    ->setDate($date)
+                    ->setCreatedAt($date);
+                $em->persist($newSubscriptionPayment);
+                $em->flush();
 
-            // return $this->redirectToRoute('index');
+                $email = new EmailWrapper($mailer);
+                $email->fakeSendEmail();
+
+                $this->addFlash('message', 'Your subscription is now active');
+                $this->addFlash('message', 'Email sent');
+
+            }
+
+            return $this->redirectToRoute('index');
 
         }else{
             /* Remove me */

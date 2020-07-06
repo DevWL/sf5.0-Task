@@ -1,16 +1,16 @@
-span.data.description{
+span.data.description {
     font-size: 0.7em;
     padding: 3px 5px;
     background: rgb(240,240,240);
     border-radius: 5px;
 }
 
-div.wrap{
+div.wrap {
     display: flex;
     justify-content: flex-end;
 }
 
-div.info-block{
+div.info-block {
     /*align-self: flex-end;*/
     /*align-items: flex-end;*/
     font-size: 0.7em;
@@ -27,6 +27,10 @@ ul.li-no-dots {
     list-style-type: none;
 }
 
-ul.li-no-dots li{
+ul.li-no-dots li {
     padding: 5px;
+}
+
+button.align-right{
+
 }

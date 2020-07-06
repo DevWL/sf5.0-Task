@@ -30,25 +30,20 @@ class CCPayFormType extends AbstractType
     private $package;
     private $tempChoice;
 
-    private $builder;
-
-    public function __construct()
-    {
-
-    }
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => CCPayFormType::class,
-            //'empty_data' => ;
+            'allow_extra_fields' => true,
+            // 'validation_groups' => false,
+            // 'empty_data' => [];
         ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->builder = $builder;
-        $this->builder
+
+        $builder
             ->add('cardType', ChoiceType::class, [
                 'placeholder' => 'Select card',
                 'choices'=> [
@@ -64,14 +59,17 @@ class CCPayFormType extends AbstractType
                     "Pro - 3000 zł"=> 3000
                 ],
             ])
-            ->add('send', SubmitType::class)
+            ->add('send', SubmitType::class, [
+                'label' => 'Purchase subscription',
+                'attr' => ['class' => 'btn-primary btn float-right']
+            ])
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 /** @var CCPayFormType|Array $user */
                 $user = $event->getData();
                 $form = $event->getForm();
 
-                //$cardType = $user->getCardType(); POST_SUBMIT
-                //$cardType = $user['cardType']; PRE_SUBMIT
+                //$cardType = $user->getCardType(); // POST_SUBMIT
+                //$cardType = $user['cardType']; // PRE_SUBMIT
 
                 $this->getSelectedCardChoice($form, $user['cardType']); // render another input field based on dynamic value passed
 
@@ -90,12 +88,14 @@ class CCPayFormType extends AbstractType
     private function getSelectedCardChoice($form, string $choiceValue = null)
     {
 
-        $form->add('cvvNumber', IntegerType::class, [
-            'constraints' => [
-                new NotBlank(),
-                new Length(['min' => 3, 'max'=> 7]),
-            ],
-        ]);
+        if($choiceValue) {
+            $form->add('cvvNumber', IntegerType::class, [
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['min' => 3, 'max' => 7]),
+                ],
+            ]);
+        }
 
         // this fields should be dynamically selected based on the choice dropdown!
         $choiceValue = $choiceValue ?? "MS";
@@ -106,6 +106,7 @@ class CCPayFormType extends AbstractType
                     'constraints' => new Length(['min' => 16, 'max' => 16]),
                     'required' => false, // remove after testing
                     'constraints' => [
+                        new NotBlank(),
                         new Regex([
                             'pattern'   => '/^5[1-5]\d{14}$/', // we should also validate checksum === 10 (We should create custom Validation Constrain) and implement $this->>luhnCheck() functionality
                             'match'     => true,
@@ -120,6 +121,7 @@ class CCPayFormType extends AbstractType
                     'constraints' => new Length(['min' => 13, 'max' => 16]),
                     'required' => false, // remove after testing
                     'constraints' => [
+                        new NotBlank(),
                         new Regex([
                             'pattern'   => '/^4\d{12}(?:\d{3})?$/',
                             'match'     => true,
@@ -134,6 +136,7 @@ class CCPayFormType extends AbstractType
                     'constraints' => new Length(['min' => 15, 'max' => 15]),
                     'required' => false, // remove after testing
                     'constraints' => [
+                        new NotBlank(),
                         new Regex([
                             'pattern'   => '/^3[47]\d{13}$/',
                             'match'     => true,
@@ -142,19 +145,9 @@ class CCPayFormType extends AbstractType
                     ]
                 ]);
                 break;
-            default:
-                $form->add('cardNumber', IntegerType::class, [
-                    'constraints' => new Length(['min' => 13, 'max' => 16]),
-                    'required' => false, // remove after testing
-                    'constraints' => [
-                        new Regex([
-                            'pattern'   => '/^(5[1-5]\d{14})|(4\d{12}(?:\d{3})?)|(3[47]\d{13})$/', // we should also validate all cards num checksum === 10 (It could be done by create custom Validation Constrain) and implement $this->>luhnCheck() functionality
-                            'match'     => true,
-                            'message'   => 'Nieprawidłowy numer karty'
-                        ])
-                    ]
-                ]);
-                break;
+
+            $form->getForm();
+
         }
     }
 
