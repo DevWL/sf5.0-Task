@@ -13,7 +13,7 @@ class EmailWrapper
     }
 
     /**
-     * Fake sending email
+     * Sends fake emails
      */
     public function fakeSendEmail()
     {
@@ -22,6 +22,6 @@ class EmailWrapper
             ->to('userEntityEmail@gmail.com')
             ->subject('Your Subscription is now active!')
             ->html('<p>Thank you for your payment. Your subscription is now active! ...</p>');
-        // $this->mailer->send($email);
+        // $this->mailer->send($email); // fake send!
     }
 }

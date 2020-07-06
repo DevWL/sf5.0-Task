@@ -58,7 +58,7 @@ class UserController extends AbstractController
          * Different approach is used is s command (app:cancel-inactive) - composed update select query
          */
         $daysLeftToSubsEnd = $em->getRepository(SubscriptionPayment::class)->daysLeftToSubsEnd($subscription->getId());
-        /* var_dump($daysLeftToSubsEnd);die; */
+
         if($daysLeftToSubsEnd === NULL ){
             $this->addFlash('warning', 'Hey new guy! You have no payments yet! Did you forgot to make payment?');
         }elseif (is_int($daysLeftToSubsEnd) && $daysLeftToSubsEnd > 0){
@@ -94,21 +94,5 @@ class UserController extends AbstractController
         /* redirect to user panel */
         return new RedirectResponse($this->generateUrl("user_subscriptions"));
     }
-
-//    /**
-//     * @Route("/subscription/pay/{id}", methods={"GET"}, name="subscription_payment")
-//     * TODO
-//     */
-//    public function subscriptionPayment(Request $request)
-//    {
-//        /* check if user have privileges to perform action, and if not redirect ... */
-//        /* process payment form and redirect to user_subscriptions */
-//
-//        /* $em = $this->getDoctrine()->getManager(); */
-//        /* $em->getRepository(Subscription::) */
-//
-//        /* redirect to user panel */
-//        return new RedirectResponse($this->generateUrl("user_subscriptions"));
-//    }
 
 }

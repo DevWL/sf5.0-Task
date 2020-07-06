@@ -10,9 +10,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture
 {
+
     public function load(ObjectManager $manager)
     {
         // user TABLE ----------------------------------------------------------------------------------------------
+        /**
+         * TODO move each fixture to it own class
+         */
         $pass =  password_hash("secretphrase", PASSWORD_BCRYPT, ['cost' => 12]);
 
         $userEntries = [

@@ -20,8 +20,11 @@ class SubscriptionPaymentRepository extends ServiceEntityRepository
     }
 
     /**
+     *
+     * This function returns number of days left to the end of the subscription
+     *
      * @param $id
-     * @return int|NULL
+     * @return int|NULL (days) or NULL
      */
     public function daysLeftToSubsEnd($id){
         $dql = "SELECT subPay.date 
@@ -45,40 +48,4 @@ class SubscriptionPaymentRepository extends ServiceEntityRepository
 
         return $daysLeftToSubsEnd;
     }
-
-     /**
-      * Find all inactive subscriptinos and stop them
-      * @return void
-      */
-
-    // PURE SQL QUERY TO FIND ONLY NEWEST PAYMENT DATE
-    // SELECT s.id, s.status, sp.id, MAX(sp.date) FROM subscription s RIGHT JOIN subscription_payment sp ON s.id = sp.subscription_id GROUP BY s.id
-
-//    /**
-//     * @param $value
-//     * @return void
-//     */
-//    public function findByExampleField($value)
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-    /*
-    public function findOneBySomeField($value): ?SubscriptionPayment
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

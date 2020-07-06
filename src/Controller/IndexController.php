@@ -47,9 +47,6 @@ class IndexController extends AbstractController
              */
             if($cCPayFormData->getCardNumberAE() != null || $cCPayFormData->getCardNumberVI() != null || $cCPayFormData->getCardNumberAE() != null) {
 
-                // dump($cCPayFormData); //test
-                // dump($cardType); //test
-
                 /**
                  * Assuming that Subscription does exists for that User before making payment
                  * (otherwise we would need to create a new Subscription and set its status to "active" skipping "new" state)
@@ -93,12 +90,7 @@ class IndexController extends AbstractController
             return $this->redirectToRoute('index');
 
         }else{
-            /* Remove me */
-            dump('form data not validated or sent');
-            if (!$form->isSubmitted()) dump('form data not submitted');
-            if ($form->isSubmitted()) {
-                if (!$form->isValid()) dump('form data not Valid but was Submitted');
-            };
+            // ... do something?
         }
 
         return $this->render('index/index.html.twig', [

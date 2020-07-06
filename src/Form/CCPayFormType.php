@@ -148,7 +148,15 @@ class CCPayFormType extends AbstractType
         }
     }
 
-    /* Luhn algorithm number checker - (c) 2005-2008 shaman - www.planzero.org */
+    /**
+     *
+     * Luhn algorithm number checker - Author: (c) 2005-2008 shaman - www.planzero.org
+     * (i) This function is not used in this project but if I would ue it.... I would probably create custom Assert class for form validation.
+     *
+     * @param $cardNum
+     * @param int $checkSum
+     * @return bool
+     */
     private function luhnCheck($cardNum, $checkSum = 10) {
 
         // Strip any non-digits (useful for credit card numbers with spaces and hyphens)
