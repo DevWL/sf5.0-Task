@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Length;
@@ -28,10 +30,12 @@ class CCPayFormType extends AbstractType
     private $package;
     private $tempChoice;
 
-//    public function __construct($someDependency)
-//    {
-//        $this->someDependency = $someDependency;
-//    }
+    private $builder;
+
+    public function __construct()
+    {
+
+    }
 
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -43,22 +47,14 @@ class CCPayFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('cardNumber', IntegerType::class, [
-                'constraints' => new Length(['min' => 13, 'max' => 16]),
-                'required' => false, // remove after testing
-                'constraints' => [
-                    new Regex([
-                        'pattern'   => '/^(5[1-5]\d{14})|(4\d{12}(?:\d{3})?)|(3[47]\d{13})$/', // we should also validate all cards num checksum === 10 (It could be done by create custom Validation Constrain) and implement $this->>luhnCheck() functionality
-                        'match'     => true,
-                        'message'   => 'Nieprawidłowy numer karty'
-                    ])
-                ]
-            ])
-            ->add('cvvNumber', IntegerType::class, [
-                'constraints' => [
-                    new NotBlank(),
-                    new Length(['min' => 3, 'max'=> 7]),
+        $this->builder = $builder;
+        $this->builder
+            ->add('cardType', ChoiceType::class, [
+                'placeholder' => 'Select card',
+                'choices'=> [
+                    'MasterCard' => 'MS',
+                    'Visa' => 'VI',
+                    'AmericanExpress'=> 'AE',
                 ],
             ])
             ->add('package', ChoiceType::class, [
@@ -68,72 +64,44 @@ class CCPayFormType extends AbstractType
                     "Pro - 3000 zł"=> 3000
                 ],
             ])
-            ->add('cardType', ChoiceType::class, [
-                'placeholder' => 'Select card',
-                'choices'=> [
-                    'MasterCard' => 'MS',
-                    'Visa' => 'VI',
-                    'AmericanExpress'=> 'AE',
-                ],
-            ])
-            ->add('cardNumberMS', IntegerType::class, [
-                'label' => 'MasterCard',
-                'constraints' => new Length(['min' => 16, 'max' => 16]),
-                'required' => false, // remove after testing
-                'constraints' => [
-                    new Regex([
-                        'pattern'   => '/^5[1-5]\d{14}$/', // we should also validate all cards num checksum === 10 (It could be done by create custom Validation Constrain) and implement $this->>luhnCheck() functionality
-                        'match'     => true,
-                        'message'   => 'Nieprawidłowy numer karty MasterCard'
-                    ])
-                ]
-            ])
-            ->add('cardNumberVI', IntegerType::class, [
-                'label' => 'VISA',
-                'constraints' => new Length(['min' => 13, 'max' => 16]),
-                'required' => false, // remove after testing
-                'constraints' => [
-                    new Regex([
-                        'pattern'   => '/^4\d{12}(?:\d{3})?$/',
-                        'match'     => true,
-                        'message'   => 'Nieprawidłowy numer karty VISA'
-                    ])
-                ]
-            ])
-            ->add('cardNumberAE', IntegerType::class, [
-                'label' => 'American Express',
-                'constraints' => new Length(['min' => 15, 'max' => 15]),
-                'required' => false, // remove after testing
-                'constraints' => [
-                    new Regex([
-                        'pattern'   => '/^3[47]\d{13}$/',
-                        'match'     => true,
-                        'message'   => 'Nieprawidłowy numer karty American Express'
-                    ])
-                ]
-            ])
             ->add('send', SubmitType::class)
-        ;
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+                /** @var CCPayFormType|Array $user */
+                $user = $event->getData();
+                $form = $event->getForm();
 
-        dump($this); //test
-        dump($options); //test
-        $this->getSelectedCardChoice($builder, 'VI'); // render another input field based on dynamic value passed
+                //$cardType = $user->getCardType(); POST_SUBMIT
+                //$cardType = $user['cardType']; PRE_SUBMIT
+
+                $this->getSelectedCardChoice($form, $user['cardType']); // render another input field based on dynamic value passed
+
+                // dump($user);
+                // dump($form);
+            });
+
+
     }
 
     /**
-     * @param FormBuilderInterface $builder
      * @param string|null $choiceValue
      * This method should take dynamic value from submitted form and based of that it adds field with requested card type.
      * Just need to figure out how to get this value to the FormType class.
      */
-    private function getSelectedCardChoice(FormBuilderInterface $builder, string $choiceValue = null)
+    private function getSelectedCardChoice($form, string $choiceValue = null)
     {
+
+        $form->add('cvvNumber', IntegerType::class, [
+            'constraints' => [
+                new NotBlank(),
+                new Length(['min' => 3, 'max'=> 7]),
+            ],
+        ]);
 
         // this fields should be dynamically selected based on the choice dropdown!
         $choiceValue = $choiceValue ?? "MS";
         switch ($choiceValue) {
             case "MS":
-                $builder->add('cardNumberMS', IntegerType::class, [
+                $form->add('cardNumberMS', IntegerType::class, [
                     'label' => 'MasterCard',
                     'constraints' => new Length(['min' => 16, 'max' => 16]),
                     'required' => false, // remove after testing
@@ -147,7 +115,7 @@ class CCPayFormType extends AbstractType
                 ]);
                 break;
             case "VI":
-                $builder->add('cardNumberVI', IntegerType::class, [
+                $form->add('cardNumberVI', IntegerType::class, [
                     'label' => 'VISA',
                     'constraints' => new Length(['min' => 13, 'max' => 16]),
                     'required' => false, // remove after testing
@@ -161,7 +129,7 @@ class CCPayFormType extends AbstractType
                 ]);
                 break;
             case "AE":
-                $builder->add('cardNumberAE', IntegerType::class, [
+                $form->add('cardNumberAE', IntegerType::class, [
                     'label' => 'American Express',
                     'constraints' => new Length(['min' => 15, 'max' => 15]),
                     'required' => false, // remove after testing
@@ -175,7 +143,17 @@ class CCPayFormType extends AbstractType
                 ]);
                 break;
             default:
-                echo "Not MS, VI, AE ?";
+                $form->add('cardNumber', IntegerType::class, [
+                    'constraints' => new Length(['min' => 13, 'max' => 16]),
+                    'required' => false, // remove after testing
+                    'constraints' => [
+                        new Regex([
+                            'pattern'   => '/^(5[1-5]\d{14})|(4\d{12}(?:\d{3})?)|(3[47]\d{13})$/', // we should also validate all cards num checksum === 10 (It could be done by create custom Validation Constrain) and implement $this->>luhnCheck() functionality
+                            'match'     => true,
+                            'message'   => 'Nieprawidłowy numer karty'
+                        ])
+                    ]
+                ]);
                 break;
         }
     }

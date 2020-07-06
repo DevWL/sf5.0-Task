@@ -17,9 +17,11 @@
     </div>
 
     <div class="row">
-        <div class="col" id="cardNumber">
-            {{ form_row(form.cardNumber) }}
-        </div>
+        {% if form.cardNumber is defined %}
+            <div class="col" id="cardNumber">
+                {{ form_row(form.cardNumber) }}
+            </div>
+        {% endif %}
         {% if form.cardNumberMS is defined %}
             <div class="col" id="cardNumberMS">
                 {{ form_row(form.cardNumberMS) }}
@@ -35,9 +37,11 @@
                 {{ form_row(form.cardNumberAE) }}
             </div>
         {% endif %}
-        <div class="col" id="cvvNumber">
-            {{ form_row(form.cvvNumber) }}
-        </div>
+        {% if form.cvvNumber is defined %}
+            <div class="col" id="cvvNumber">
+                {{ form_row(form.cvvNumber) }}
+            </div>
+        {% endif %}
     </div>
     <div class="row">
         <div class="col" id="cardType">
